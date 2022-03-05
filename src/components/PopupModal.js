@@ -200,13 +200,6 @@ class PopupContent extends React.Component {
                         {this.renderActivePage()}
                     </div>
                 </div>
-                <div className={'gh-portal-powered outside ' + (hasMode(['preview']) ? ' hidden' : '') + pageClass}>
-                    <a href='https://ghost.org' target='_blank' rel='noopener noreferrer' onClick={() => {
-                        window.open('https://ghost.org', '_blank');
-                    }}>
-                        <img src="https://static.ghost.org/v4.0.0/images/powered.png" border="0" width="142" height="30" alt="Publish with Ghost" />
-                    </a>
-                </div>
             </>
         );
     }

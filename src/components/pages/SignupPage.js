@@ -616,13 +616,6 @@ class SignupPage extends React.Component {
                 <footer className={'gh-portal-signup-footer ' + footerClass}>
                     {this.renderSubmitButton()}
                     {this.renderLoginMessage()}
-                    <div className="gh-portal-powered inside">
-                        <a href='https://ghost.org' target='_blank' rel='noopener noreferrer' onClick={() => {
-                            window.open('https://ghost.org', '_blank');
-                        }}>
-                            <img src="https://static.ghost.org/v4.0.0/images/powered.png" border="0" width="142" height="30" alt="Publish with Ghost" />
-                        </a>
-                    </div>
                 </footer>
             </>
         );
