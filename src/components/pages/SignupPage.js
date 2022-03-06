@@ -5,12 +5,27 @@ import PlansSection, {SingleProductPlansSection} from '../common/PlansSection';
 import ProductsSection from '../common/ProductsSection';
 import InputForm from '../common/InputForm';
 import {ValidateInputForm} from '../../utils/form';
-import {getSiteProducts, getSitePrices, hasMultipleProducts, hasOnlyFreePlan, isInviteOnlySite, getAvailableProducts, hasMultipleProductsFeature, freeHasBenefitsOrDescription} from '../../utils/helpers';
+import {getSimplecircLoginUrl, getSimplecircSubscriptionUrl, isPrintPlan, isFreePlan, getFreeTierTitle, getSiteProducts, getSitePrices, hasMultipleProducts, hasOnlyFreePlan, isInviteOnlySite, getAvailableProducts, hasMultipleProductsFeature, freeHasBenefitsOrDescription} from '../../utils/helpers';
 import {ReactComponent as InvitationIcon} from '../../images/icons/invitation.svg';
 
 const React = require('react');
 
+const ORANGE_COLOR = '#f60';
+
 export const SignupPageStyles = `
+    .gh-portal-print-subscription-choice-title {
+        margin-bottom: 24px;
+    }
+
+    .gh-portal-print-subscription-choice-explanation {
+        width: 100%;
+        text-align: center;
+    }
+
+    .gh-portal-login-link {
+        color: ${ORANGE_COLOR};
+    }
+
     .gh-portal-signup-logo {
         position: relative;
         display: block;
@@ -308,10 +323,12 @@ class SignupPage extends React.Component {
 
     handleSelectPlan = (e, priceId) => {
         e && e.preventDefault();
+        const {site} = this.context;
         // Hack: React checkbox gets out of sync with dom state with instant update
         this.timeoutId = setTimeout(() => {
             this.setState((prevState) => {
                 return {
+                    isPrint: isPrintPlan({planId: priceId, site}),
                     plan: priceId
                 };
             });
@@ -380,13 +397,16 @@ class SignupPage extends React.Component {
     }
 
     renderSubmitButton() {
-        const {action, site, brandColor, pageQuery} = this.context;
+        const {action, site, pageQuery} = this.context;
 
         if (isInviteOnlySite({site, pageQuery})) {
             return null;
         }
 
-        let label = 'Continue';
+        let label = isFreePlan({planId: this.state.plan}) ?
+            `Start ${getFreeTierTitle({site}).toUpperCase()} Subscription` :
+            'Start WEB Subscription';
+
         if (hasOnlyFreePlan({site})) {
             label = 'Sign up';
         }
@@ -409,7 +429,7 @@ class SignupPage extends React.Component {
                 retry={retry}
                 onClick={e => this.handleSignup(e)}
                 disabled={disabled}
-                brandColor={brandColor}
+                brandColor={ORANGE_COLOR}
                 label={label}
                 isRunning={isRunning}
                 tabIndex='3'
@@ -462,7 +482,7 @@ class SignupPage extends React.Component {
         const {brandColor, onAction} = this.context;
         return (
             <div className='gh-portal-signup-message'>
-                <div>Already a member?</div>
+                <div>Already a WEB subscriber?</div>
                 <button
                     className='gh-portal-btn gh-portal-btn-link'
                     style={{color: brandColor}}
@@ -483,6 +503,118 @@ class SignupPage extends React.Component {
         }
     }
 
+    renderPrintSubscribeButton() {
+        const redirectToLogin = (e) => {
+            const {name, email} = this.state;
+            window.location = `${getSimplecircSubscriptionUrl()}?email=${email}&name=${name}`;
+        };
+
+        return (
+            <ActionButton
+                style={{width: '100%', marginTop: 12, marginBottom: 12}}
+                retry={false}
+                onClick={redirectToLogin}
+                disabled={false}
+                brandColor={ORANGE_COLOR}
+                label='Start new PRINT Subscription'
+                isRunning={false}
+                tabIndex='4'
+            />
+        );
+    }
+
+    renderPrintRenewalButton() {
+        const {brandColor} = this.context;
+
+        const redirectToLogin = (e) => {
+            window.location = getSimplecircLoginUrl();
+        };
+
+        return (
+            <ActionButton
+                style={{width: '100%', marginTop: 12, marginBottom: 12}}
+                retry={false}
+                onClick={redirectToLogin}
+                disabled={false}
+                brandColor={brandColor}
+                label='Renew PRINT Subscription'
+                isRunning={false}
+                tabIndex='4'
+            />
+        );
+    }
+
+    navigateToPrintLoginPage() {
+        window.location = getSimplecircLoginUrl();
+    }
+
+    renderLoginOptions() {
+        const {onAction} = this.context;
+        return (
+            <>
+                <p>
+                    To manage your <strong>existing PRINT subscription</strong>,
+                    {' '}
+                    <a
+                        href={getSimplecircLoginUrl()}
+                        className='gh-portal-login-link'
+                        onClick={this.navigateToPrintLoginPage}
+                    >
+                        log into your PRINT account
+                    </a>
+                    .
+                </p>
+                <p>
+                    If you have an <strong>active WEB subscription</strong>,
+                    {' '}
+                    <a
+                        href="/#/portal/signin"
+                        className='gh-portal-login-link'
+                        onClick={() => onAction('switchPage', {page: 'signin'})}
+                    >
+                        log into your WEB account
+                    </a>
+                    .
+                </p>
+            </>
+        );
+    }
+
+    renderWebOptions() {
+        if (this.state.isPrint) {
+            return false;
+        }
+
+        return (
+            <>
+                {this.renderSubmitButton()}
+                {this.renderLoginMessage()}
+            </>
+        );
+    }
+
+    renderPrintOptions() {
+        if (!this.state.isPrint) {
+            return false;
+        }
+
+        return (
+            <>
+                <h3 className='gh-portal-print-subscription-choice-title'>
+                    What would you like to do?
+                </h3>
+                <p className='gh-portal-print-subscription-choice-explanation'>
+                    I want a start a new subscription, or gift a subscription.
+                    {this.renderPrintSubscribeButton()}
+                </p>
+                <p className='gh-portal-print-subscription-choice-explanation'>
+                    I'm already a subscriber, and want to renew my subscription.
+                    {this.renderPrintRenewalButton()}
+                </p>
+            </>
+        );
+    }
+
     renderForm() {
         const fields = this.getInputFields({state: this.state});
         const {site, pageQuery} = this.context;
@@ -500,12 +632,14 @@ class SignupPage extends React.Component {
         return (
             <section>
                 <div className='gh-portal-section'>
-                    <InputForm
-                        fields={fields}
-                        onChange={(e, field) => this.handleInputChange(e, field)}
-                        onKeyDown={e => this.onKeyDown(e)}
-                    />
                     {this.renderProductsOrPlans()}
+                    {!this.state.isPrint &&
+                        <InputForm
+                            fields={fields}
+                            onChange={(e, field) => this.handleInputChange(e, field)}
+                            onKeyDown={e => this.onKeyDown(e)}
+                        />
+                    }
                 </div>
             </section>
         );
@@ -532,12 +666,13 @@ class SignupPage extends React.Component {
     }
 
     renderFormHeader() {
-        const {site} = this.context;
-        const siteTitle = site.title || '';
+        // const {site} = this.context;
+        // const siteTitle = site.title || '';
         return (
             <header className='gh-portal-signup-header'>
                 {this.renderSiteLogo()}
-                <h2 className="gh-portal-main-title">{siteTitle}</h2>
+                {this.renderLoginOptions()}
+                {/*<h2 className="gh-portal-main-title">{siteTitle}</h2>*/}
             </header>
         );
     }
@@ -578,8 +713,8 @@ class SignupPage extends React.Component {
                     {this.renderForm()}
                 </div>
                 <footer className={'gh-portal-signup-footer ' + footerClass}>
-                    {this.renderSubmitButton()}
-                    {this.renderLoginMessage()}
+                    {this.renderWebOptions()}
+                    {this.renderPrintOptions()}
                 </footer>
             </>
         );
@@ -596,8 +731,8 @@ class SignupPage extends React.Component {
                     {this.renderForm()}
                 </div>
                 <footer className={'gh-portal-signup-footer ' + footerClass}>
-                    {this.renderSubmitButton()}
-                    {this.renderLoginMessage()}
+                    {this.renderWebOptions()}
+                    {this.renderPrintOptions()}
                 </footer>
             </>
         );
@@ -614,8 +749,8 @@ class SignupPage extends React.Component {
                     {this.renderForm()}
                 </div>
                 <footer className={'gh-portal-signup-footer ' + footerClass}>
-                    {this.renderSubmitButton()}
-                    {this.renderLoginMessage()}
+                    {this.renderWebOptions()}
+                    {this.renderPrintOptions()}
                 </footer>
             </>
         );

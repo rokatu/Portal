@@ -282,7 +282,7 @@ export function getFreeProductBenefits({site}) {
 }
 
 export function getFreeTierTitle({site}) {
-    return 'Free';
+    return 'Newsletter';
 }
 
 export function getFreeTierDescription({site}) {
@@ -556,4 +556,35 @@ export const getUpdatedOfferPrice = ({offer, price, useFormatted = false}) => {
 
 export const isActiveOffer = ({offer}) => {
     return offer?.status === 'active';
+};
+
+export const isFreePlan = ({planId}) => planId === 'free';
+
+export const isPrintPlan = ({planId, site = {}}) => {
+    if (!planId) {
+        return false;
+    }
+
+    const printProduct = getPrintProduct({site});
+
+    return printProduct?.monthlyPrice?.id === planId ||
+        printProduct?.yearlyPrice?.id === planId;
+};
+
+export const getPrintProduct = ({site = {}}) => {
+    const {products} = site;
+
+    return products.find((product) => {
+        return product.type === 'paid' && /print/i.test(product.name);
+    });
+};
+
+export const getSimplecircLoginUrl = () => 'https://simplecirc.com/subscriber_login/roadrunner';
+
+export const getSimplecircSubscriptionUrl = () => 'https://simplecirc.com/subscribe/roadrunner/';
+
+export const getSortedProducts = ({unsortedProducts}) => {
+    return unsortedProducts.sort((productA, productB) => {
+        return productA?.name > productB?.name;
+    });
 };

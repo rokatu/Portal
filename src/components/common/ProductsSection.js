@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import Switch from '../common/Switch';
 import {ReactComponent as CheckmarkIcon} from '../../images/icons/checkmark.svg';
-import {getSiteProducts, getCurrencySymbol, getPriceString, getStripeAmount, isCookiesDisabled, getMemberActivePrice, getProductFromPrice, getFreeTierTitle, getFreeTierDescription, getFreeProduct} from '../../utils/helpers';
+import {getPrintProduct, getSortedProducts, getSiteProducts, getCurrencySymbol, getPriceString, getStripeAmount, isCookiesDisabled, getMemberActivePrice, getProductFromPrice, getFreeTierTitle, getFreeTierDescription, getFreeProduct} from '../../utils/helpers';
 import AppContext from '../../AppContext';
 import ActionButton from './ActionButton';
 import calculateDiscount from '../../utils/discount';
@@ -777,12 +777,14 @@ function getActiveInterval({portalPlans, selectedInterval = 'year'}) {
     }
 }
 
-function ProductsSection({onPlanSelect, products, type = null}) {
+function ProductsSection({onPlanSelect, products: unsortedProducts, type = null}) {
     const {site} = useContext(AppContext);
     const {portal_plans: portalPlans} = site;
     const defaultInterval = getActiveInterval({portalPlans});
+    const products = getSortedProducts({unsortedProducts});
+    const printProductId = getPrintProduct({site})?.id;
 
-    const defaultProductId = products.length > 0 ? products[0].id : 'free';
+    const defaultProductId = products.length > 0 ? printProductId || products[0].id : 'free';
     const [selectedInterval, setSelectedInterval] = useState(defaultInterval);
     const [selectedProduct, setSelectedProduct] = useState(defaultProductId);
 
