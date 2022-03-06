@@ -368,7 +368,7 @@ const SubscribeButton = () => {
     return (
         <ActionButton
             isRunning={isRunning}
-            label="View plans"
+            label="View Subscription Options"
             onClick={() => openPlanPage()}
             brandColor={brandColor}
             style={{width: '100%'}}
@@ -402,7 +402,7 @@ const AccountWelcome = () => {
 
     return (
         <div className='gh-portal-section'>
-            <p className='gh-portal-text-center gh-portal-free-ctatext'>You currently have a free membership, upgrade to a paid subscription for full access.</p>
+            <p className='gh-portal-text-center gh-portal-free-ctatext'>You are currently signed up for the free newsletter. Upgrade to a paid subscription for full access.</p>
             <SubscribeButton />
         </div>
     );

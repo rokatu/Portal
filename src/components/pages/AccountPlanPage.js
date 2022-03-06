@@ -5,7 +5,7 @@ import CloseButton from '../common/CloseButton';
 import BackButton from '../common/BackButton';
 import PlansSection, {MultipleProductsPlansSection, SingleProductPlansSection} from '../common/PlansSection';
 import {getDateString} from '../../utils/date-time';
-import {formatNumber, getAvailablePrices, getFilteredPrices, getMemberActivePrice, getMemberSubscription, getPriceFromSubscription, getProductFromPrice, getSubscriptionFromId, getUpgradeProducts, hasMultipleProducts, hasMultipleProductsFeature, isPaidMember} from '../../utils/helpers';
+import {getSimplecircSubscriptionUrl, isPrintPlan, formatNumber, getAvailablePrices, getFilteredPrices, getMemberActivePrice, getMemberSubscription, getPriceFromSubscription, getProductFromPrice, getSubscriptionFromId, getUpgradeProducts, hasMultipleProducts, hasMultipleProductsFeature, isPaidMember} from '../../utils/helpers';
 
 export const AccountPlanPageStyles = `
     .gh-portal-accountplans-main {
@@ -47,7 +47,7 @@ function getConfirmationPageTitle({confirmationType}) {
 
 const Header = ({onBack, showConfirmation, confirmationType}) => {
     const {member, brandColor, lastPage} = useContext(AppContext);
-    let title = isPaidMember({member}) ? 'Change plan' : 'Choose a plan';
+    let title = isPaidMember({member}) ? 'Change subscription' : 'Choose a subscription';
     if (showConfirmation) {
         title = getConfirmationPageTitle({confirmationType});
     }
@@ -382,6 +382,11 @@ export default class AccountPlanPage extends React.Component {
     onPlanCheckout(e, priceId) {
         const {onAction, member} = this.context;
         const {confirmationPlan, selectedPlan} = this.state;
+        const {site} = this.context;
+        if (isPrintPlan({planId: selectedPlan, site})) {
+            window.location = getSimplecircSubscriptionUrl();
+            return;
+        }
         if (isPaidMember({member})) {
             const subscription = getMemberSubscription({member});
             const subscriptionId = subscription ? subscription.id : '';
