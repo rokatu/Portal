@@ -579,9 +579,9 @@ export const getPrintProduct = ({site = {}}) => {
     });
 };
 
-export const getSimplecircLoginUrl = () => 'https://simplecirc.com/subscriber_login/roadrunner';
+export const getSimplecircLoginUrl = () => 'https://magazine.roadrunner.travel/subscriber_login';
 
-export const getSimplecircSubscriptionUrl = () => 'https://simplecirc.com/subscribe/roadrunner/';
+export const getSimplecircSubscriptionUrl = () => 'https://magazine.roadrunner.travel/subscribe';
 
 export const getSortedProducts = ({unsortedProducts}) => {
     return unsortedProducts.sort((productA, productB) => {
