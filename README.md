@@ -5,7 +5,11 @@ docker-compose run --entrypoint=/bin/sh portal
 
 yarn build
 
-export SOURCE=umd/portal.min.js; export HASH=$(md5 -q $SOURCE); cp $SOURCE umd/portal-$HASH.min.js
+exit
+
+export SOURCE=umd/portal.min.js
+export HASH=$(md5 -q $SOURCE)
+cp $SOURCE umd/portal-$HASH.min.js
 open umd/
 ```
 

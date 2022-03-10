@@ -24,7 +24,7 @@ const TriggerButtonStyles = `
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--brandcolor);
+        background: #f60;
         height: 60px;
         min-width: 60px;
         box-shadow: rgba(0, 0, 0, 0.24) 0px 8px 16px -2px;
