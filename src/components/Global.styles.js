@@ -2,6 +2,7 @@ export const GlobalStyles = `
     /* Colors
     /* ----------------------------------------------------- */
     :root {
+        --secondaryBrandColor: #f60;
         --black: #000;
         --grey0: #1d1d1d;
         --grey1: #333;

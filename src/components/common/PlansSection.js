@@ -202,7 +202,7 @@ export const PlanSectionStyles = `
     }
 
     .gh-portal-plan-checkbox input:checked ~ .checkmark {
-        background-color: var(--brandcolor);
+        background-color: var(--secondaryBrandColor, var(--brandcolor));
     }
 
     .gh-portal-plan-checkbox .checkmark::after {
