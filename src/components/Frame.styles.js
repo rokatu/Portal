@@ -817,7 +817,7 @@ const MobileStyles = `
         animation: popup-mobile 0.25s ease-in-out;
         box-shadow: none !important;
         transform: translateY(0);
-        padding: 28px !important;
+        padding: 10px !important;
     }
 
     .gh-portal-popup-container.full-size {
@@ -877,12 +877,17 @@ const MobileStyles = `
     }
 }
 
+
 @media (max-width: 390px) {
     .gh-portal-popup-container:not(.account-plan) .gh-portal-detail-header .gh-portal-main-title {
         font-size: 2.1rem;
         margin-top: 1px;
         padding: 0 74px;
         text-align: center;
+    }
+
+    .gh-portal-content {
+        padding: 0px;
     }
 
     .gh-portal-input {
@@ -997,8 +1002,9 @@ const MultipleProductsGlobalStyles = `
 
 @media (max-width: 960px) {
     .gh-portal-popup-wrapper.multiple-products.signup:not(.preview) {
-        margin: 20px !important;
         height: 100%;
+        max-height: 100vh !important;
+        max-width: 100vw !important;
     }
 }
 

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {ReactComponent as LoaderIcon} from '../../images/icons/loader.svg';
 import {ReactComponent as CheckmarkIcon} from '../../images/icons/checkmark.svg';
-import {getCurrencySymbol, getPriceString, getStripeAmount, getMemberActivePrice, getProductFromPrice, getFreeTierTitle, getFreeTierDescription, getFreeProduct, getFreeProductBenefits, formatNumber, isCookiesDisabled, hasOnlyFreeProduct} from '../../utils/helpers';
+import {getPrintProduct, getSortedProducts, getCurrencySymbol, getPriceString, getStripeAmount, getMemberActivePrice, getProductFromPrice, getFreeTierTitle, getFreeTierDescription, getFreeProduct, getFreeProductBenefits, formatNumber, isCookiesDisabled, hasOnlyFreeProduct} from '../../utils/helpers';
 import AppContext from '../../AppContext';
 import calculateDiscount from '../../utils/discount';
 
@@ -93,7 +93,7 @@ export const ProductsSectionStyles = ({site}) => {
         .gh-portal-product-card {
             flex: 1;
             max-width: 420px;
-            min-width: 320px;
+            min-width: 300px;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -157,7 +157,7 @@ export const ProductsSectionStyles = ({site}) => {
             margin-top: -4px;
             word-break: break-word;
             width: 100%;
-            color: var(--brandcolor);
+            color: var(--secondaryBrandColor);
         }
 
         .gh-portal-discount-label {
@@ -203,7 +203,7 @@ export const ProductsSectionStyles = ({site}) => {
         .gh-portal-product-price {
             display: flex;
             justify-content: center;
-            color: var(--grey0);
+            color: var(--grey4);
         }
 
         .gh-portal-product-price .currency-sign {
@@ -222,7 +222,6 @@ export const ProductsSectionStyles = ({site}) => {
             font-weight: 700;
             line-height: 1em;
             letter-spacing: -1.3px;
-            color: var(--grey0);
         }
 
         .gh-portal-product-price .billing-period {
@@ -247,11 +246,12 @@ export const ProductsSectionStyles = ({site}) => {
         }
 
         .gh-portal-product-description {
-            font-size: 1.55rem;
-            font-weight: 600;
-            line-height: 1.4em;
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 1.5em;
             width: 100%;
-            margin-top: 16px;
+            margin: 32px 0;
+            color: var(--grey6);
         }
 
         .gh-portal-product-benefits {
@@ -607,7 +607,7 @@ function FreeProductCard({products, handleChooseSignup}) {
                                 onClick={(e) => {
                                     handleChooseSignup(e, 'free');
                                 }}>
-                                {((selectedProduct === 'free' && disabled) ? <LoaderIcon className='gh-portal-loadingicon' /> : 'Choose')}
+                                {((selectedProduct === 'free' && disabled) ? <LoaderIcon className='gh-portal-loadingicon' /> : 'Get Newsletter')}
                             </button>
                         </div>
                         : '')}
@@ -658,7 +658,7 @@ function ProductCard({product, products, selectedInterval, handleChooseSignup}) 
                                 const selectedPrice = getSelectedPrice({products, selectedInterval, selectedProduct: product.id});
                                 handleChooseSignup(e, selectedPrice.id);
                             }}>
-                            {((selectedProduct === product.id && disabled) ? <LoaderIcon className='gh-portal-loadingicon' /> : 'Choose')}
+                            {((selectedProduct === product.id && disabled) ? <LoaderIcon className='gh-portal-loadingicon' /> : `Start ${product.name}`)}
                         </button>
                     </div>
                 </div>
@@ -748,12 +748,14 @@ function getActiveInterval({portalPlans, selectedInterval = 'year'}) {
     }
 }
 
-function ProductsSection({onPlanSelect, products, type = null, handleChooseSignup}) {
+function ProductsSection({onPlanSelect, products: unsortedProducts, type = null, handleChooseSignup}) {
     const {site} = useContext(AppContext);
     const {portal_plans: portalPlans} = site;
     const defaultInterval = getActiveInterval({portalPlans});
+    const products = getSortedProducts({unsortedProducts, site});
+    const printProductId = getPrintProduct({site})?.id;
 
-    const defaultProductId = products.length > 0 ? products[0].id : 'free';
+    const defaultProductId = products.length > 0 ? printProductId || products[0].id : 'free';
     const [selectedInterval, setSelectedInterval] = useState(defaultInterval);
     const [selectedProduct, setSelectedProduct] = useState(defaultProductId);
 
