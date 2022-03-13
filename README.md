@@ -1,3 +1,48 @@
+# RoadRUNNER
+
+```
+docker-compose run --entrypoint=/bin/sh portal
+
+yarn build
+
+exit
+
+export SOURCE=umd/portal.min.js
+export HASH=$(md5 -q $SOURCE)
+export TARGET=umd/portal-$HASH.min.js
+cp $SOURCE $TARGET
+open umd/
+
+aws s3 cp $TARGET s3://assets.roadrunner.travel/ \
+  --acl public-read \
+  --cache-control max-age=2592000,public
+```
+
+```js
+<script type="text/javascript">
+// Pre-fill name and email from query string
+(function() {
+  var i = setInterval(function() {
+    if (document.getElementById('subscriber-name')) {
+      if (location.search.length > 10) {
+        location.search.slice(1).split('&').forEach(function(w) {
+          var p = w.split('=');
+          var v = decodeURI(p.slice(1).join('='));
+          if (p[0] == 'name') {
+            document.getElementById('subscriber-name').value = v;
+          }
+          if (p[0] == 'email') {
+            document.getElementById('email').value = v;
+          }
+        })
+      }
+      clearInterval(i)
+    }
+  }, 500)
+})()
+</script>
+```
+
 # Portal
 
 [![CI Status](https://github.com/TryGhost/portal/workflows/Test/badge.svg?branch=main)](https://github.com/TryGhost/portal/actions)
