@@ -234,7 +234,7 @@ const FrameStyles = `
         padding: 10vmin 0;
         height: 100%;
         max-height: 100vh;
-        overflow: scroll;
+        overflow: auto;
     }
 
     .gh-portal-popup-container {
@@ -352,12 +352,12 @@ const FrameStyles = `
     */
     .gh-portal-content {
         position: relative;
-        overflow-y: scroll;
+        overflow-y: auto;
         padding: 24px 32px 32px;
     }
 
     .gh-portal-content.with-footer {
-        overflow-y: scroll;
+        overflow-y: auto;
         padding-bottom: 0;
     }
 
@@ -841,7 +841,7 @@ const MultipleProductsGlobalStyles = `
 }
 
 .gh-portal-popup-wrapper.multiple-products.signup {
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: clip;
     margin: 32px auto;
 }
