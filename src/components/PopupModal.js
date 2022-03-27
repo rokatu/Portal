@@ -4,7 +4,6 @@ import AppContext from '../AppContext';
 import {getFrameStyles} from './Frame.styles';
 import Pages, {getActivePage} from '../pages';
 import PopupNotification from './common/PopupNotification';
-import PoweredBy from './common/PoweredBy';
 import {getSiteProducts, isInviteOnlySite, isCookiesDisabled, hasFreeProductPrice} from '../utils/helpers';
 
 const React = require('react');
@@ -136,7 +135,6 @@ class PopupContent extends React.Component {
             ...Styles.page[page]
         };
         let popupWidthStyle = '';
-        let popupSize = 'regular';
 
         let cookieBannerText = '';
         let pageClass = page;
@@ -165,7 +163,6 @@ class PopupContent extends React.Component {
         if (noOfProducts > 1 && !isInviteOnlySite({site, pageQuery})) {
             if (page === 'signup') {
                 pageClass += ' full-size';
-                popupSize = 'full';
             }
         }
 
@@ -173,7 +170,6 @@ class PopupContent extends React.Component {
         if ((freeProduct && noOfProducts > 2) || (!freeProduct && noOfProducts > 1)) {
             if (page === 'accountPlan') {
                 pageClass += ' full-size';
-                popupSize = 'full';
             }
         }
 
@@ -199,15 +195,7 @@ class PopupContent extends React.Component {
                         <CookieDisabledBanner message={cookieBannerText} />
                         {this.renderPopupNotification()}
                         {this.renderActivePage()}
-                        {(popupSize === 'full' ?
-                            <div className={'gh-portal-powered inside ' + (hasMode(['preview']) ? 'hidden ' : '') + pageClass}>
-                                <PoweredBy />
-                            </div>
-                            : '')}
                     </div>
-                </div>
-                <div className={'gh-portal-powered outside ' + (hasMode(['preview']) ? 'hidden ' : '') + pageClass}>
-                    <PoweredBy />
                 </div>
             </>
         );
