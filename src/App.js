@@ -71,6 +71,27 @@ export default class App extends React.Component {
         if (this.state.initStatus === 'success' && prevState.initStatus !== this.state.initStatus) {
             const {siteUrl} = this.props;
             const contextState = this.getContextFromState();
+
+            if (contextState.member) {
+                const loggedIn = document.getElementsByClassName('portal-when-logged-in');
+                Array.prototype.forEach.call(loggedIn, (el) => {
+                    el.style.display = 'block';
+                });
+                const loggedOut = document.getElementsByClassName('portal-when-logged-out');
+                Array.prototype.forEach.call(loggedOut, (el) => {
+                    el.style.display = 'none';
+                });
+            } else {
+                const loggedIn = document.getElementsByClassName('portal-when-logged-in');
+                Array.prototype.forEach.call(loggedIn, (el) => {
+                    el.style.display = 'none';
+                });
+                const loggedOut = document.getElementsByClassName('portal-when-logged-out');
+                Array.prototype.forEach.call(loggedOut, (el) => {
+                    el.style.display = 'block';
+                });
+            }
+
             this.sendPortalReadyEvent();
             handleDataAttributes({
                 siteUrl,
