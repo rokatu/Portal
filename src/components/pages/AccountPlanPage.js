@@ -195,15 +195,17 @@ const ChangePlanSection = ({plans, selectedPlan, onPlanSelect, onCancelSubscript
     const {member, action, brandColor} = useContext(AppContext);
     return (
         <section>
-            <div className='gh-portal-section gh-portal-accountplans-main'>
-                <PlansOrProductSection
-                    showLabel={false}
-                    plans={plans}
-                    selectedPlan={selectedPlan}
-                    onPlanSelect={onPlanSelect}
-                    changePlan={true}
-                />
-            </div>
+            {false && (
+                <div className='gh-portal-section gh-portal-accountplans-main'>
+                    <PlansOrProductSection
+                        showLabel={false}
+                        plans={plans}
+                        selectedPlan={selectedPlan}
+                        onPlanSelect={onPlanSelect}
+                        changePlan={true}
+                    />
+                </div>
+            )}
             <CancelSubscriptionButton {...{member, onCancelSubscription, action, brandColor}} />
         </section>
     );
