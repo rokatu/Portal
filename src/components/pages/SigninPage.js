@@ -4,6 +4,7 @@ import CloseButton from '../common/CloseButton';
 import AppContext from '../../AppContext';
 import InputForm from '../common/InputForm';
 import {ValidateInputForm} from '../../utils/form';
+import {getSimplecircLoginUrl} from '../../utils/helpers';
 
 const React = require('react');
 
@@ -13,6 +14,7 @@ export default class SigninPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            accountType: null,
             email: ''
         };
     }
@@ -24,6 +26,15 @@ export default class SigninPage extends React.Component {
                 page: 'accountHome'
             });
         }
+    }
+
+    handleSelectWebAccount(e) {
+        e.preventDefault();
+        this.setState({accountType: 'web'});
+    }
+    handleSelectPrintAccount(e) {
+        e.preventDefault();
+        window.location = getSimplecircLoginUrl();
     }
 
     handleSignin(e) {
@@ -95,6 +106,27 @@ export default class SigninPage extends React.Component {
         );
     }
 
+    renderWebAccountButton() {
+        return (
+            <ActionButton
+                style={{width: '100%'}}
+                onClick={e => this.handleSelectWebAccount(e)}
+                brandColor={this.context.brandColor}
+                label="WEB Subscription Account"
+            />
+        );
+    }
+    renderPrintAccountButton() {
+        return (
+            <ActionButton
+                style={{width: '100%'}}
+                onClick={e => this.handleSelectPrintAccount(e)}
+                brandColor="var(--secondaryBrandColor)"
+                label="PRINT Subscription Account"
+            />
+        );
+    }
+
     renderSignupMessage() {
         const brandColor = this.context.brandColor;
         return (
@@ -134,17 +166,58 @@ export default class SigninPage extends React.Component {
     }
 
     renderFormHeader() {
-        // const siteTitle = this.context.site.title || 'Site Title';
-
         return (
             <header className='gh-portal-signin-header'>
                 {this.renderSiteLogo()}
-                <h1 className="gh-portal-main-title">Sign in</h1>
+                { this.state.accountType === null && (
+                    <h2 className="gh-portal-main-title">Select Your Account Type</h2>
+                )}
+                { this.state.accountType === 'web' && (
+                    <>
+                        <h2 className="gh-portal-main-title">Account Login</h2>
+                        <h3>WEB Subscription</h3>
+                    </>
+                )}
             </header>
         );
     }
 
+    renderAccountTypeOptions() {
+        return (
+            <>
+                <div className='gh-portal-content signin'>
+                    <CloseButton />
+                    {this.renderFormHeader()}
+                </div>
+                <footer className='gh-portal-signin-footer'>
+                    <div className='gh-portal-signup-message'>
+                        <div style={{marginBottom: '16px'}}>
+                            Access your PRINT subscription account to renew your
+                            magazine subscription or update your physical
+                            mailing address.
+                        </div>
+                    </div>
+                    {this.renderPrintAccountButton()}
+                </footer>
+                <footer className='gh-portal-signin-footer'>
+                    <div className='gh-portal-signup-message'>
+                        <div style={{marginBottom: '16px'}}>
+                            Log into your WEB subscription account to update
+                            your email address, and manage your online
+                            subscription.
+                        </div>
+                    </div>
+                    {this.renderWebAccountButton()}
+                </footer>
+            </>
+        );
+    }
+
     render() {
+        if (this.state.accountType === null) {
+            return this.renderAccountTypeOptions();
+        }
+
         return (
             <>
                 {/* <div className='gh-portal-back-sitetitle'>
