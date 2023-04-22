@@ -5,7 +5,7 @@ import CloseButton from '../common/CloseButton';
 import BackButton from '../common/BackButton';
 import {MultipleProductsPlansSection} from '../common/PlansSection';
 import {getDateString} from '../../utils/date-time';
-import {allowCompMemberUpgrade, formatNumber, getAvailablePrices, getFilteredPrices, getMemberActivePrice, getMemberSubscription, getPriceFromSubscription, getProductFromPrice, getSubscriptionFromId, getUpgradeProducts, hasMultipleProductsFeature, isComplimentaryMember, isPaidMember} from '../../utils/helpers';
+import {getSimplecircSubscriptionUrl, isPrintPlan, allowCompMemberUpgrade, formatNumber, getAvailablePrices, getFilteredPrices, getMemberActivePrice, getMemberSubscription, getPriceFromSubscription, getProductFromPrice, getSubscriptionFromId, getUpgradeProducts, hasMultipleProductsFeature, isComplimentaryMember, isPaidMember} from '../../utils/helpers';
 
 export const AccountPlanPageStyles = `
     .account-plan.full-size .gh-portal-main-title {
@@ -52,7 +52,7 @@ function getConfirmationPageTitle({confirmationType}) {
 
 const Header = ({onBack, showConfirmation, confirmationType}) => {
     const {member} = useContext(AppContext);
-    let title = isPaidMember({member}) ? 'Change plan' : 'Choose a plan';
+    let title = isPaidMember({member}) ? 'Change subscription' : 'Choose a subscription';
     if (showConfirmation) {
         title = getConfirmationPageTitle({confirmationType});
     }
@@ -360,6 +360,12 @@ export default class AccountPlanPage extends React.Component {
         let {confirmationPlan, selectedPlan} = this.state;
         if (priceId) {
             selectedPlan = priceId;
+        }
+
+        const {site} = this.context;
+        if (isPrintPlan({planId: selectedPlan, site})) {
+            window.location = getSimplecircSubscriptionUrl();
+            return;
         }
 
         const restrictCheckout = allowCompMemberUpgrade({member}) ? !isComplimentaryMember({member}) : true;
