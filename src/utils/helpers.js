@@ -393,11 +393,7 @@ export function getFreeProductBenefits({site}) {
 }
 
 export function getFreeTierTitle({site}) {
-    if (hasOnlyFreeProduct({site})) {
-        return 'Free membership';
-    } else {
-        return 'Free';
-    }
+    return 'Newsletter';
 }
 
 export function getFreeTierDescription({site}) {
@@ -752,6 +748,47 @@ export const getUpdatedOfferPrice = ({offer, price, useFormatted = false}) => {
 
 export const isActiveOffer = ({offer}) => {
     return offer?.status === 'active';
+};
+
+export const isFreePlan = ({planId}) => planId === 'free';
+
+export const isPrintPlan = ({planId, site = {}}) => {
+    if (!planId) {
+        return false;
+    }
+
+    const printProduct = getPrintProduct({site});
+
+    return printProduct?.monthlyPrice?.id === planId ||
+        printProduct?.yearlyPrice?.id === planId;
+};
+
+export const getPrintProduct = ({site = {}}) => {
+    const {products} = site;
+
+    return products.find((product) => {
+        return product.type === 'paid' && /print/i.test(product.name);
+    });
+};
+
+export const getSimplecircLoginUrl = () => 'https://magazine.roadrunner.travel/subscriber_login';
+
+export const getSimplecircSubscriptionUrl = () => 'https://magazine.roadrunner.travel/subscribe';
+
+export const getSortedProducts = ({unsortedProducts, site}) => {
+    return unsortedProducts.sort((productA, productB) => {
+        if (isFreePlan({planId: productA?.id})) {
+            return -1;
+        } else if (isFreePlan({planId: productB?.id})) {
+            return 1;
+        } else if (isPrintPlan({planId: productA?.id, site})) {
+            return -1;
+        } else if (isPrintPlan({planId: productB?.id, site})) {
+            return 1;
+        } else {
+            return productA?.name > productB?.name;
+        }
+    });
 };
 
 function createMonthlyPrice({tier, priceId}) {
